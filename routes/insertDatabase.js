@@ -1,48 +1,37 @@
 var express = require('express');
 var router = express.Router();
 const bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({extended: false});
 
 var mysql = require('mysql')
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'toor',
     password: 'toor',
-    database: 'school'
+    database: 'almacen'
 })
 
-function verifyCarIns(req, res){
-    res.status(200).send(req.body.id)
-}
 
-function getRows(req, res){
-    console.log('connected as id ' + connection.threadId);
-        var resp
-        resp = "<table align=\"center\"> <tr> <th>Id</th> <th>career</th></tr>"
-        /// start query
-        var query = connection.query('Select * from careers where id like \'%'+req+'%\'');
+
+function sendToDatabase(req, res){
+    var data = req.body
+    var query = connection.query("Insert into articulo (sku, nombre_articulo, descripcion, costo, unidad_medida, fecha_alta, id_usuario, id_proveedor) " +
+    "values ('"+data.sku+"', '"+ data.nombre_articulo+"', '"+ data.descripcion+"', '"+ data.costo+"', '"+ data.unidad_medida+"', '"+ data.fecha_alta+"', '"+ data.id_usuario+"', '"+ data.id_proveedor+"')");
         query
             .on('error', function(err) {
-                console.log(err);
+                console.log(this.sql)
+                res.status(200).send("Error While Inserting" + err)
             })
             .on('result', function(row) {
+                res.send(201, "Inserted Correctly");
                 console.log(row);
-                resp += "<tr>"
-                resp += "<td>"+row.id +"</td>"
-                resp += "<td>"+row.career +"</td>"
-                resp += "</tr>"
-                return;
-            })
-            .on('end', function(){
-                resp += "</table>"
-                res.send(200, resp);
             });
 }
 
 
-router.get('/',  (req, res) => {
-    console.log(req.body.id)
-    verifyCarIns(req, res)
+router.post('/',  (req, res) => {
+    console.log(req.body)
+    sendToDatabase(req,res)
+    //verifyCarIns(req, res)
     //getRows("", res)
 });
 
