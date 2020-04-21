@@ -11,6 +11,7 @@ var testAPIRouter = require("./routes/testAPI");
 var readDatabaseRouter = require("./routes/readDatabase");
 var searchDatabaseRouter = require("./routes/searchDatabase");
 var insertDatabaseRouter = require("./routes/insertDatabase");
+var articulosRouter = require("./routes/Articulos");
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use("/testAPI", testAPIRouter);
 app.use("/dbtest", readDatabaseRouter);
 app.use("/search", searchDatabaseRouter);
 app.use("/insert",insertDatabaseRouter);
+app.use("/articulos", articulosRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
