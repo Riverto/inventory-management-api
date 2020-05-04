@@ -12,6 +12,7 @@ var readDatabaseRouter = require("./routes/readDatabase");
 var searchDatabaseRouter = require("./routes/searchDatabase");
 var insertDatabaseRouter = require("./routes/insertDatabase");
 var articulosRouter = require("./routes/Articulos");
+var proveedoresRouter = require("./routes/Proveedores");
 
 var app = express();
 
@@ -33,6 +34,7 @@ app.use("/dbtest", readDatabaseRouter);
 app.use("/search", searchDatabaseRouter);
 app.use("/insert",insertDatabaseRouter);
 app.use("/articulos", articulosRouter);
+app.use("/proveedores", proveedoresRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
