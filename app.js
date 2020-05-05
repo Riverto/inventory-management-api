@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
 require('dotenv').config()
+const bcrypt = require('bcrypt');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -14,6 +15,7 @@ var searchDatabaseRouter = require("./routes/searchDatabase");
 var insertDatabaseRouter = require("./routes/insertDatabase");
 var articulosRouter = require("./routes/Articulos");
 var proveedoresRouter = require("./routes/Proveedores");
+var usuariosRouter = require("./routes/Usuarios");
 
 var app = express();
 
@@ -36,6 +38,7 @@ app.use("/search", searchDatabaseRouter);
 app.use("/insert",insertDatabaseRouter);
 app.use("/articulos", articulosRouter);
 app.use("/proveedores", proveedoresRouter);
+app.use("/usuarios", usuariosRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
