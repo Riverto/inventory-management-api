@@ -15,8 +15,8 @@ function sendToDatabase(req, res){
     var data = req.body
     
     bcrypt.hash(data.contrasena, saltRounds, function(err, hash) {
-        var query = connection.query("Insert into usuario (nombre_usuario, nombre, apellido, contrasena, tipo_usuario, fecha_alta) " +
-    "values ('"+ data.nombre_usuario + "', '"+ data.nombre+"', '"+ data.apellido+"', '"+ hash +"', '"+ data.tipo_usuario+"', '" + data.fecha_alta+"')");
+        var query = connection.query("Insert into usuario (nombre_usuario, nombre, apellido, contrasena, tipo_usuario) " +
+    "values ('"+ data.nombre_usuario + "', '"+ data.nombre+"', '"+ data.apellido+"', '"+ hash +"', '"+ data.tipo_usuario+"')");
         query
             .on('error', function(err) {
                 console.log(this.sql)
