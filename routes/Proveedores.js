@@ -30,7 +30,7 @@ function sendToDatabase(req, res){
 function getFromDatabase(res){
             var resp_rows = {'data':[]};
             /// start query
-            var query = connection.query('Select * from articulo');
+            var query = connection.query('Select * from proveedor');
             query
                 .on('error', function(err) {
                     console.log(err);

@@ -18,7 +18,8 @@ function sendToDatabase(req, res){
         query
             .on('error', function(err) {
                 console.log(this.sql)
-                res.status(200).send("Error While Inserting" + err)
+                //res.status(200).send("Error While Inserting" + err)
+                res.redirect(303,"http://localhost:3000/articles")
             })
             .on('result', function(row) {
                 res.send(201, "Inserted Correctly");
