@@ -73,6 +73,32 @@ function getFromDatabase(req,res){
             })
 }
 
+function getAllfromDatabase(req,res){
+    let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
+    /// start query
+    var query = connection.query('Select num_mov, tipo, descripcion, nombre from movimientos, usuario where usuario.id_usuario = movimientos.id_usuario');
+    query
+        .on('error', function(err) {
+            console.log(err);
+        })
+        .on('result', function(row) {
+            nrow = {
+                'num_mov': row.num_mov,
+                'tipo': row.tipo,
+                'descripcion': row.descripcion,
+                'nombre': row.nombre,
+            }
+            resp_rows.data.push(nrow);
+            console.log(row);
+            return;
+        })
+        .on('end', function(){
+            resp_rows.totalCount = resp_rows.data.length
+            resp_rows.data = resp_rows.data.slice((resp_rows.page-1)*req.params.per,((resp_rows.page)*req.params.per))
+            res.status(200).send(resp_rows);
+            console.log(resp_rows)
+        });
+}
 
 router.get('/load/:index', (req, res) => {
     console.log(req.body)
@@ -90,9 +116,10 @@ router.post('/insertArticulo/:index',  (req, res) => {
 });
 
 
-router.get('/show', (req,res) => {
-    console.log(req)
-    getFromDatabase(res)
+router.get('/show/:page/:per', (req,res) => {
+    console.log(req.params.page)
+    console.log(req.params.per)
+    getAllfromDatabase(req,res)
 });
 
 module.exports = router;
