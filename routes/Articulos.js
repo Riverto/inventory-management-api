@@ -71,6 +71,40 @@ function getFromDatabase(res){
                 });
     }
 
+function getAllfromDatabase(req,res){
+    let resp_rows = {'data':[],'page':req.params.page,'total':0};
+    /// start query
+    var query = connection.query('Select * from articulo');
+    query
+        .on('error', function(err) {
+            console.log(err);
+        })
+        .on('result', function(row) {
+            nrow = {
+                'sku': row.sku,
+                'nombre_articulo': row.nombre_articulo,
+                'descripcion': row.descripcion,
+                'costo': row.costo,
+                'unidad_medida': row.unidad_medida,
+                'fecha_alta': row.fecha_alta,
+                'id_usuario': row.id_usuario,
+                'id_proveedor': row.id_proveedor,
+            }
+            resp_rows.data.push(nrow);
+            console.log(row);
+            return;
+        })
+        .on('end', function(){
+            resp_rows.total = resp_rows.data.length
+            res.status(200).send(resp_rows);
+            console.log(resp_rows)
+        });
+}
+
+router.get('/show/:page', (req,res) => {
+    console.log(req.params.page)
+    getAllfromDatabase(req,res)
+});
 
 router.post('/insert',  (req, res) => {
     console.log(req.body)
