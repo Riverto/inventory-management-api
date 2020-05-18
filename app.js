@@ -17,6 +17,8 @@ var articulosRouter = require("./routes/Articulos");
 var proveedoresRouter = require("./routes/Proveedores");
 var usuariosRouter = require("./routes/Usuarios");
 var movimientosRouter = require("./routes/Movimientos");
+var inventarioactualRouter = require("./routes/InventarioActual");
+var resurtirRouter = require("./routes/Resurtir");
 
 var app = express();
 
@@ -41,7 +43,8 @@ app.use("/articulos", articulosRouter);
 app.use("/proveedores", proveedoresRouter);
 app.use("/usuarios", usuariosRouter);
 app.use("/movimientos", movimientosRouter);
-
+app.use("/inventarioactual", inventarioactualRouter);
+app.use("/resurtir", resurtirRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

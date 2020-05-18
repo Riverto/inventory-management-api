@@ -40,9 +40,9 @@ id_proveedor
 
 */
 function getFromDatabase(res){
-            var resp
+            //var resp
             var resp_rows = {'data':[]};
-            resp = "<table align=\"center\"> <tr> <th>Id</th> <th>career</th></tr>"
+            //resp = "<table align=\"center\"> <tr> <th>Id</th> <th>career</th></tr>"
             /// start query
             var query = connection.query('Select * from articulo');
             query
@@ -65,7 +65,7 @@ function getFromDatabase(res){
                     return;
                 })
                 .on('end', function(){
-                    resp += "</table>"
+                    //resp += "</table>"
                     res.status(200).send(resp_rows);
                     console.log(resp_rows)
                 });
