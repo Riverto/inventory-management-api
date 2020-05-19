@@ -13,8 +13,8 @@ var connection = mysql.createConnection({
 
 function sendToDatabase(req, res){
     var data = req.body
-    var query = connection.query("Insert into articulo (sku, nombre_articulo, descripcion, costo, unidad_medida, fecha_alta, id_usuario, id_proveedor) " +
-    "values ('"+data.sku+"', '"+ data.nombre_articulo+"', '"+ data.descripcion+"', '"+ data.costo+"', '"+ data.unidad_medida+"', '"+ data.fecha_alta+"', '"+ data.id_usuario+"', '"+ data.id_proveedor+"')");
+    var query = connection.query("Insert into articulo (sku, nombre_articulo, descripcion, costo, unidad_medida, resurtir, id_usuario, id_proveedor) " +
+    "values ('"+data.sku+"', '"+ data.nombre_articulo+"', '"+ data.descripcion+"', '"+ data.costo+"', '"+ data.unidad_medida+"', '"+ data.resurtir+"', '"+ data.id_usuario+"', '"+ data.id_proveedor+"')");
         query
             .on('error', function(err) {
                 console.log(this.sql)
@@ -22,6 +22,7 @@ function sendToDatabase(req, res){
                 res.redirect(303,"http://localhost:3000/articles")
             })
             .on('result', function(row) {
+                console.log(this.sql)
                 res.send(201, "Inserted Correctly");
                 console.log(row);
             });
