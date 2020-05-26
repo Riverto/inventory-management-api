@@ -76,7 +76,7 @@ function getFromDatabase(req,res){
 function getAllfromDatabase(req,res){
     let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
     /// start query
-    var query = connection.query('Select num_mov, tipo, descripcion, nombre from movimientos, usuario where usuario.id_usuario = movimientos.id_usuario');
+    var query = connection.query('select movimientos.num_mov, movimientos.tipo, movimientos.descripcion, sum(articulos_mov.cantidad * articulo.costo) as costo, usuario.nombre from movimientos, articulo, articulos_mov, usuario where articulos_mov.index_movimiento = movimientos.num_mov and articulo.sku = articulos_mov.index_articulos and usuario.id_usuario = movimientos.id_usuario group by num_mov');
     query
         .on('error', function(err) {
             console.log(err);
@@ -87,6 +87,7 @@ function getAllfromDatabase(req,res){
                 'tipo': row.tipo,
                 'descripcion': row.descripcion,
                 'nombre': row.nombre,
+                'costo': row.costo
             }
             resp_rows.data.push(nrow);
             console.log(row);

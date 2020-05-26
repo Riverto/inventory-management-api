@@ -16,14 +16,14 @@ function sendToDatabase(req, res){
     
     bcrypt.hash(data.contrasena, saltRounds, function(err, hash) {
         var query = connection.query("Insert into usuario (nombre_usuario, nombre, apellido, contrasena, tipo_usuario) " +
-    "values ('"+ data.nombre_usuario + "', '"+ data.nombre+"', '"+ data.apellido+"', '"+ hash +"', '"+ data.tipo_usuario+"')");
+    "values ('"+ data.nombre_usuario + "', '"+ data.nombre+"', '"+ data.apellido+"', '"+ hash +"', '"+ data.tipo+"')");
         query
             .on('error', function(err) {
                 console.log(this.sql)
-                res.status(200).send("Error While Inserting" + err + data)
+                res.status(200).send("Error While Inserting: User may already exist")
             })
             .on('result', function(row) {
-                res.send(201, "Inserted Correctly" + data);
+                res.send(201, "Inserted Correctly");
                 console.log(row);
             });
     });
@@ -86,6 +86,33 @@ function getAllfromDatabase(req,res){
             console.log(resp_rows)
         });
 }
+//p
+//{}
+function verifyLogin(req,res){
+    var data = req.body
+    var hash
+    var id
+    var query = connection.query("Select contrasena, id_usuario from usuario where nombre_usuario = '"+data.nombre_usuario+"'");
+    query
+    .on('error', function(err) {
+        console.log(err);
+    })
+    .on('result', function(row) {
+        console.log(row)
+        hash = row.contrasena
+        console.log(bcrypt.compareSync(data.contrasena, hash))
+        if(bcrypt.compareSync(data.contrasena, hash)){
+            id = row.id_usuario
+        } else {
+            id = -1
+        }
+    })
+    .on('end', function(){
+        res.status(200).send(id.toString());
+    });
+
+}
+
 
 router.get('/show/:page', (req,res) => {
     console.log(req.params.page)
@@ -101,6 +128,11 @@ router.post('/insert',  (req, res) => {
 router.get('/show', (req,res) => {
     console.log(req)
     getFromDatabase(res)
+});
+
+router.post('/login', (req,res) => {
+    console.log(req)
+    verifyLogin(req, res)
 });
 
 module.exports = router;
