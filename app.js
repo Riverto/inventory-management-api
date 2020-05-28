@@ -21,6 +21,8 @@ var inventarioactualRouter = require("./routes/InventarioActual");
 var resurtirRouter = require("./routes/Resurtir");
 var inactividadRouter = require("./routes/Inactividad");
 var dashboardarticuloRouter = require("./routes/DashboardArticulos");
+var valorInventarioRouter = require("./routes/valorInventario");
+
 
 var app = express();
 
@@ -48,6 +50,7 @@ app.use("/movimientos", movimientosRouter);
 app.use("/inventarioactual", inventarioactualRouter);
 app.use("/resurtir", resurtirRouter);
 app.use("/inactividad", inactividadRouter);
+app.use("/valor", valorInventarioRouter);
 app.use("/dashboardarticulos", dashboardarticuloRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

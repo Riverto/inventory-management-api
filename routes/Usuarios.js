@@ -91,8 +91,9 @@ function getAllfromDatabase(req,res){
 function verifyLogin(req,res){
     var data = req.body
     var hash
-    var id
-    var query = connection.query("Select contrasena, id_usuario from usuario where nombre_usuario = '"+data.nombre_usuario+"'");
+    var resp = []
+    var valid = false
+    var query = connection.query("Select contrasena, id_usuario, tipo_usuario from usuario where nombre_usuario = '"+data.nombre_usuario+"'");
     query
     .on('error', function(err) {
         console.log(err);
@@ -102,13 +103,14 @@ function verifyLogin(req,res){
         hash = row.contrasena
         console.log(bcrypt.compareSync(data.contrasena, hash))
         if(bcrypt.compareSync(data.contrasena, hash)){
-            id = row.id_usuario
-        } else {
-            id = -1
+            valid = true
+            resp.push(row.id_usuario)
+            resp.push(row.tipo_usuario)
         }
     })
     .on('end', function(){
-        res.status(200).send(id.toString());
+        if(valid) res.status(200).send(resp);
+        else res.status(200).send("-1");
     });
 
 }

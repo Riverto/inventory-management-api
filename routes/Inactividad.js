@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
 function getAllfromDatabase(req,res){
     let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
     /// start query
-    var query = connection.query('select articulo.sku as sku, articulo.nombre_articulo as nombre, sum( CASE WHEN movimientos.tipo = "e" THEN articulos_mov.cantidad ELSE articulos_mov.cantidad * -1 END ) as cantidad, max(movimientos.fecha_alta) as ultima, abs(DATEDIFF(movimientos.fecha_alta,CURRENT_DATE())) as diff from articulo, movimientos, articulos_mov where articulos_mov.index_articulos = articulo.sku and movimientos.num_mov = articulos_mov.index_movimiento GROUP by articulo.sku ORDER by diff desc');
+    var query = connection.query('SELECT articulo.sku, articulo.nombre_articulo, sum(CASE WHEN movimientos.tipo = "e" THEN articulos_mov.cantidad WHEN movimientos.tipo = "s" THEN articulos_mov.cantidad * -1 ELSE 0 END) as cantidad, articulo.fecha_alta, max(GREATEST(COALESCE(movimientos.fecha_alta,0),articulo.fecha_alta)) as ultima, abs(DATEDIFF(max(GREATEST(COALESCE(movimientos.fecha_alta,0),articulo.fecha_alta)),CURRENT_DATE())) as diff from articulo left join articulos_mov on articulo.sku = articulos_mov.index_articulos left join movimientos on articulos_mov.index_movimiento = movimientos.num_mov GROUP by sku order by diff DESC');
     query
         .on('error', function(err) {
             console.log(err);
@@ -22,7 +22,7 @@ function getAllfromDatabase(req,res){
         .on('result', function(row) {
             nrow = {
                 'sku': row.sku,
-                'nombre': row.nombre,
+                'nombre': row.nombre_articulo,
                 'cantidad': row.cantidad,
                 'ultima': row.ultima,
                 'diff': row.diff

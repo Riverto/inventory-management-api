@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 function getAllfromDatabase(req,res){
     let resp_rows = {'data':[],'page':req.params.page,'total':0};
     /// start query
-    var query = connection.query('SELECT a.sku, a.nombre_articulo, SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) as cantidadarticulos, b.nombre FROM articulo a, articulos_mov c, proveedor b, movimientos d WHERE a.sku=c.index_articulos and a.id_proveedor=b.id_proveedor and c.index_movimiento=d.num_mov GROUP BY a.sku HAVING SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) <= 10');
+    var query = connection.query('SELECT articulo.sku, articulo.nombre_articulo as nombre_articulo, articulo.resurtir, sum(CASE WHEN movimientos.tipo = "e" THEN articulos_mov.cantidad WHEN movimientos.tipo = "s" THEN articulos_mov.cantidad * -1 ELSE 0 END) as cantidadarticulos, proveedor.nombre from articulo left join articulos_mov on articulo.sku = articulos_mov.index_articulos left join movimientos on articulos_mov.index_movimiento = movimientos.num_mov left join proveedor on articulo.id_proveedor = proveedor.id_proveedor GROUP by sku HAVING cantidadarticulos <= resurtir order by cantidadarticulos ASC');
     query
         .on('error', function(err) {
             console.log(err);

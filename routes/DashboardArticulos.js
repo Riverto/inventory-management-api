@@ -14,7 +14,8 @@ function getFromDatabase(res){
             var resp_rows = {'data':[]};
             //resp = "<table align=\"center\"> <tr> <th>Id</th> <th>career</th></tr>"
             /// start query
-            var query = connection.query('SELECT a.nombre_articulo, SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) as cantidadarticulos FROM articulo a, articulos_mov c, movimientos d WHERE a.sku=c.index_articulos and c.index_movimiento=d.num_mov GROUP BY a.sku HAVING SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) <= 10 ORDER BY SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) ASC LIMIT 4');
+            //var query = connection.query('SELECT a.nombre_articulo, SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) as cantidadarticulos FROM articulo a, articulos_mov c, movimientos d WHERE a.sku=c.index_articulos and c.index_movimiento=d.num_mov GROUP BY a.sku HAVING SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) <= 10 ORDER BY SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) ASC LIMIT 4');
+            var query = connection.query('SELECT articulo.sku, articulo.nombre_articulo as nombre_articulo, articulo.resurtir, sum(CASE WHEN movimientos.tipo = "e" THEN articulos_mov.cantidad WHEN movimientos.tipo = "s" THEN articulos_mov.cantidad * -1 ELSE 0 END) as cantidadarticulos from articulo left join articulos_mov on articulo.sku = articulos_mov.index_articulos left join movimientos on articulos_mov.index_movimiento = movimientos.num_mov GROUP by sku HAVING cantidadarticulos <= resurtir order by cantidadarticulos asc limit 4');
             query
                 .on('error', function(err) {
                     console.log(err);

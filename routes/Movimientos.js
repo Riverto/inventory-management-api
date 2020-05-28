@@ -101,6 +101,31 @@ function getAllfromDatabase(req,res){
         });
 }
 
+function getFromDatabaseLimited(res){
+    var resp_rows = {'data':[]};
+
+    var query = connection.query('SELECT movimientos.num_mov, movimientos.fecha_alta, movimientos.tipo, sum(articulos_mov.cantidad * articulo.costo) as costo from movimientos, articulos_mov, articulo WHERE articulos_mov.index_movimiento = movimientos.num_mov and articulo.sku = articulos_mov.index_articulos group by num_mov order by num_mov desc limit 5');
+    query
+        .on('error', function(err) {
+            console.log(err);
+        })
+        .on('result', function(row) {
+            nrow = {
+                'num_mov': row.num_mov,
+                'fecha_alta': row.fecha_alta,
+                'tipo': row.tipo,
+                'costo': row.costo,
+            }
+            resp_rows.data.push(nrow);
+            console.log(row);
+            return;
+        })
+        .on('end', function(){
+            res.status(200).send(resp_rows);
+            console.log(resp_rows)
+        });
+}
+
 router.get('/load/:index', (req, res) => {
     console.log(req.body)
     getFromDatabase(req,res)
@@ -121,6 +146,10 @@ router.get('/show/:page/:per', (req,res) => {
     console.log(req.params.page)
     console.log(req.params.per)
     getAllfromDatabase(req,res)
+});
+
+router.get('/showlimited', (req,res) => {
+    getFromDatabaseLimited(res)
 });
 
 module.exports = router;
