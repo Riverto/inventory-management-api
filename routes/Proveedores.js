@@ -123,5 +123,9 @@ router.post('/insert',  (req, res) => {
     sendToDatabase(req,res)
 });
 
+router.get('/show', (req,res) => {
+    console.log(req)
+    getFromDatabase(res)
+});
 
 module.exports = router;
