@@ -59,7 +59,7 @@ function getFromDatabase(res){
     }
 
 function getAllfromDatabase(req,res){
-    let resp_rows = {'data':[],'page':req.params.page,'total':0};
+    let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
     /// start query
     var query = connection.query('Select * from usuario');
     query
@@ -112,24 +112,52 @@ function verifyLogin(req,res){
         if(valid) res.status(200).send(resp);
         else res.status(200).send("-1");
     });
-
 }
 
+function searchDatabase(req,res){
+    let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
+    /// start query
+    var query = connection.query('Select * from usuario where (id_usuario like "'+req.params.search+'%" or nombre like "'+req.params.search+'%" or apellido like "'+req.params.search+'%" or nombre_usuario like "'+req.params.search+'%")');
+    query
+        .on('error', function(err) {
+            console.log(err);
+        })
+        .on('result', function(row) {
+            nrow = {
+                'id_usuario': row.id_usuario,
+                'nombre_usuario': row.nombre_usuario,
+                'nombre': row.nombre,
+                'apellido': row.apellido,
+                'contrasena' : row.contrasena,
+                'tipo_usuario': row.tipo_usuario,
+                'fecha_alta': row.fecha_alta,
+            }
+            resp_rows.data.push(nrow);
+            console.log(row);
+            return;
+        })
+        .on('end', function(){
+            resp_rows.total = resp_rows.data.length
+            res.status(200).send(resp_rows);
+            console.log(resp_rows)
+        });
+}
 
-router.get('/show/:page', (req,res) => {
+router.get('/show/:page/:per', (req,res) => {
     console.log(req.params.page)
+    console.log(req.params.per)
     getAllfromDatabase(req,res)
+});
+
+router.get('/search/:page/:per/:search', (req,res) => {
+    console.log(req.params.page)
+    console.log(req.params.per)
+    searchDatabase(req,res)
 });
 
 router.post('/insert',  (req, res) => {
     console.log(req.body)
     sendToDatabase(req,res)
-});
-
-
-router.get('/show', (req,res) => {
-    console.log(req)
-    getFromDatabase(res)
 });
 
 router.post('/login', (req,res) => {

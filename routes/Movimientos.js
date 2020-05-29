@@ -126,6 +126,34 @@ function getFromDatabaseLimited(res){
         });
 }
 
+function searchDatabase(req,res){
+    let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
+    /// start query
+    var query = connection.query('select movimientos.num_mov, movimientos.tipo, movimientos.descripcion, sum(articulos_mov.cantidad * articulo.costo) as costo, usuario.nombre from movimientos, articulo, articulos_mov, usuario where articulos_mov.index_movimiento = movimientos.num_mov and articulo.sku = articulos_mov.index_articulos and usuario.id_usuario = movimientos.id_usuario and (num_mov like "'+req.params.search+'%" or movimientos.descripcion like "%'+req.params.search+'%" or nombre like "%'+req.params.search+'%") group by num_mov');
+    query
+        .on('error', function(err) {
+            console.log(err);
+        })
+        .on('result', function(row) {
+            nrow = {
+                'num_mov': row.num_mov,
+                'tipo': row.tipo,
+                'descripcion': row.descripcion,
+                'nombre': row.nombre,
+                'costo': row.costo
+            }
+            resp_rows.data.push(nrow);
+            console.log(row);
+            return;
+        })
+        .on('end', function(){
+            resp_rows.totalCount = resp_rows.data.length
+            resp_rows.data = resp_rows.data.slice((resp_rows.page-1)*req.params.per,((resp_rows.page)*req.params.per))
+            res.status(200).send(resp_rows);
+            console.log(resp_rows)
+        });
+}
+
 router.get('/load/:index', (req, res) => {
     console.log(req.body)
     getFromDatabase(req,res)
@@ -146,6 +174,13 @@ router.get('/show/:page/:per', (req,res) => {
     console.log(req.params.page)
     console.log(req.params.per)
     getAllfromDatabase(req,res)
+});
+
+router.get('/search/:page/:per/:search', (req,res) => {
+    console.log(req.params.page)
+    console.log(req.params.per)
+    console.log(req.params.search)
+    searchDatabase(req,res)
 });
 
 router.get('/showlimited', (req,res) => {

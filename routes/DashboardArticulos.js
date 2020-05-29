@@ -37,7 +37,7 @@ function getFromDatabase(res){
     }
 
 function getAllfromDatabase(req,res){
-    let resp_rows = {'data':[],'page':req.params.page,'total':0};
+    let resp_rows = {'data':[],'page':req.params.page,'totalCount':0};
     /// start query
     var query = connection.query('SELECT a.nombre_articulo, SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) as cantidadarticulos FROM articulo a, articulos_mov c, movimientos d WHERE a.sku=c.index_articulos and c.index_movimiento=d.num_mov GROUP BY a.sku HAVING SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) <= 10 ORDER BY SUM(CASE WHEN d.tipo="e" THEN c.cantidad ELSE 0 END) ASC LIMIT 4');
      query
